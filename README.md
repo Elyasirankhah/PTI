@@ -2,6 +2,11 @@
 
 Computational workflow for two representations of the same participant-response text, then mother-level association checks.
 
+[![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![NumPy](https://img.shields.io/badge/numpy-1.24%2B-013243?style=flat&logo=numpy&logoColor=white)](https://numpy.org/)
+[![pandas](https://img.shields.io/badge/pandas-2.0%2B-150458?style=flat&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3%2B-F7931E?style=flat&logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
+
 1. **Parallel quantitizing.** Ontology-guided Patient Voice (PV) sub-code densities, and unsupervised non-negative matrix factorization (NMF) themes, fit separately on the same paragraphs.
 2. **Cross-stream alignment.** Qualitative. Not produced by these scripts.
 3. **Overlap and external-anchor checks.** Feature overlap, leave-one-mother-out logistic regression with feature selection inside each training fold, and fold-selection frequencies.
