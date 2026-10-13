@@ -4,5 +4,8 @@ __pycache__/
 venv/
 .env
 outputs/
+data/units.jsonl
+data/cohort_units.jsonl
+data/participant_outcomes.csv
 *.egg-info/
 .ipynb_checkpoints/

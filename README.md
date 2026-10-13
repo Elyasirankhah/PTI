@@ -30,16 +30,16 @@ PTI_reproduction_bundle/
   requirements.txt
   config.py
   data/
-    units.jsonl                  # paragraph pool
-    cohort_units.jsonl           # participant-turn subset (generated)
-    participant_outcomes.csv     # mother-level outcome
     schema/pv_predictions_schema.json
+    units.jsonl                  # supplied locally; not in this repository
+    participant_outcomes.csv     # supplied locally; not in this repository
+    cohort_units.jsonl           # generated locally; not in this repository
   scripts/
   _lib/
   outputs/                       # created on run; not tracked
 ```
 
-The files under `data/` are synthetic format examples (`DemoCorpus`, ids `P001`, `R001`). Replace them with the analysis corpus under the applicable data-use agreement.
+Paragraph text and outcome files are not included. Place `units.jsonl` and `participant_outcomes.csv` in `data/` before running. `cohort_units.jsonl` is created by the first script.
 
 Participant rows kept for modeling have `turn_role=participant` or a leading `P:` / `R:` speaker prefix. Turns with fewer than five alphabetic words are dropped.
 
