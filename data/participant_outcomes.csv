@@ -1,0 +1,6 @@
+participant_id,subcorpus,cohort,include_in_regression,depressed
+P001,DemoCorpus,Depressed,1,1
+P002,DemoCorpus,Non-Depressed,1,0
+P003,DemoCorpus,Non-Depressed,1,0
+P004,DemoCorpus,Depressed,1,1
+P005,DemoCorpus,Non-Depressed,1,0

@@ -1,0 +1,11 @@
+{
+  "record_ids": [
+    "R001_P001",
+    "R002_P001"
+  ],
+  "predictions": [
+    "{\"results\": [{\"Code\": \"SDOH\", \"Sub-code\": \"EconomicStability\", \"Span\": \"money\"}]}",
+    "{\"results\": [{\"Code\": \"PartnershipPatient\", \"Sub-code\": \"expressOpinions\", \"Span\": \"talk\"}]}"
+  ],
+  "note": "Replace with your TAB-PO / PV Miner output. Each prediction is a JSON string of PV records."
+}
