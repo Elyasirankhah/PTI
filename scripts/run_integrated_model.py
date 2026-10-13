@@ -80,10 +80,10 @@ def _eval_block_nested(
     n_perm: int,
     seed: int,
 ) -> dict[str, Any]:
-    """Top-k_ash from NMF + top-k_pv from PV per fold → one logistic (PI design)."""
+    """Top NMF themes and top PV sub-codes per fold, concatenated into one logistic model."""
     Xa, Xp, y, ash_kept, pv_kept = _split_blocks(table, ash_cols, pv_cols, outcome)
     if Xa.shape[1] == 0 or Xp.shape[1] == 0:
-        return {"name": f"Block nested {k_pv}PV+{k_ash}Ash", "error": "empty block"}
+        return {"name": f"Block {k_pv} PV + {k_ash} NMF", "error": "empty block"}
 
     nested = nested_loocv_logistic_block(
         Xa, Xp, ash_kept, pv_kept, y, k_ash=k_ash, k_pv=k_pv,
@@ -97,7 +97,7 @@ def _eval_block_nested(
     )
     n_feat = min(k_ash, Xa.shape[1]) + min(k_pv, Xp.shape[1])
     return {
-        "name": f"PI block nested: {k_pv} PV + {k_ash} NMF → one regression",
+        "name": f"Block: {k_pv} PV + {k_ash} NMF → one regression",
         "method": "block_nested_one_regression",
         "matrix": f"29 x {n_feat} ({k_pv} PV + {k_ash} NMF)",
         "k_pv": k_pv,
@@ -124,14 +124,14 @@ def _eval_block_screen(
     """Screen top-k per block on full n=29, concat columns, one LOOCV (exploratory/leaky)."""
     Xa, Xp, y, ash_kept, pv_kept = _split_blocks(table, ash_cols, pv_cols, outcome)
     if Xa.shape[1] == 0 or Xp.shape[1] == 0:
-        return {"name": f"Block screen {k_pv}PV+{k_ash}Ash", "error": "empty block"}
+        return {"name": f"Block screen {k_pv} PV + {k_ash} NMF", "error": "empty block"}
 
     top_ash = univariate_screen(Xa, y, ash_kept, top_k=min(k_ash, Xa.shape[1]))
     top_pv = univariate_screen(Xp, y, pv_kept, top_k=min(k_pv, Xp.shape[1]))
     used = [t["feature"] for t in top_ash] + [t["feature"] for t in top_pv]
 
     res = run_model(
-        f"PI block screen: {k_pv} PV + {k_ash} NMF → one regression",
+        f"Block screen: {k_pv} PV + {k_ash} NMF → one regression",
         table, used, outcome, n_perm=n_perm, seed=seed,
     )
     res["method"] = "block_screen_one_regression"
@@ -154,7 +154,7 @@ def _eval_topk_screen(
     n_perm: int,
     seed: int,
 ) -> dict[str, Any]:
-    """NOT PI design: only k features total from merged pool (legacy)."""
+    """Legacy: only k features total from the merged pool."""
     X_raw, y, cols = _matrix(table, pool_cols, outcome)
     X, kept, dropped = drop_constants(X_raw, cols)
     if X.shape[1] == 0:
@@ -207,7 +207,7 @@ def _eval_nested_topk(
         "accuracy": nested.get("loocv_accuracy"),
         "perm_p": perm.get("permutation_p_auc"),
         "example_fold_features": nested.get("example_fold_features"),
-        "note": "NOT PI design: k features total from merged pool inside each fold",
+        "note": "Legacy: k features total from the merged pool inside each fold",
     }
 
 
@@ -266,19 +266,19 @@ def main() -> None:
         "--blocks",
         nargs="+",
         default=["5,4", "5,6"],
-        help="PI block specs as k_pv,k_ash e.g. 5,4 → 29×9 one regression",
+        help="Block specs as k_pv,k_nmf e.g. 5,4 → one regression",
     )
     ap.add_argument(
         "--legacy-pooled-k",
         type=int,
         nargs="*",
         default=[],
-        help="Optional legacy: k features total from merged pool (not PI design)",
+        help="Optional legacy: k features total from the merged pool",
     )
     ap.add_argument(
         "--only-concat",
         action="store_true",
-        help="Run ONLY the PI concatenated model (default block 5,4 → one AUC)",
+        help="Run only the concatenated model (first --blocks spec)",
     )
     args = ap.parse_args()
 
@@ -391,14 +391,14 @@ def main() -> None:
             lines.append(f"Example fold:    {', '.join(primary['example_fold_features'])}")
     else:
         lines = [
-            "Demo Combined NMF + PV — ONE regression (PI block design)",
+            "Combined NMF + PV — one regression",
             "=" * 72,
             f"Predictions: {args.predictions}",
             f"Cohort: n={len(table)} ({n_pos} depressed, {len(table) - n_pos} non-depressed)",
             f"Paragraphs: {len(paragraphs)}",
             f"NMF theme columns: {len(ash_cols)}  |  PV subcode columns: {len(pv_cols)}",
             "",
-            "PI design: stack PV and NMF theme columns side-by-side, ONE logistic model",
+            "Stack PV and NMF theme columns side-by-side in one logistic model",
             "  Depression ~ PV_1 + ... + PV_k + NMF_1 + ... + NMF_m",
             f"  Block specs: {args.blocks}  (k_pv,k_ash → 29×[k_pv+k_ash])",
             "",

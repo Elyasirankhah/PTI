@@ -27,8 +27,7 @@ PV_GROUP_CODES: dict[str, tuple[str, ...]] = {
 # Key = feature suffix; value = list of (Code, Sub-code) combos to sum.
 # Sub-code "*" is a wildcard: match that Code regardless of sub-code (used when
 # TAB-PO emits the Code with a blank/variable sub-code, e.g. SocioEmotional).
-# Row-count / burden meta-features added after the original README headline runs.
-# They dominate gap-only/combined pools on balanced profiles and mask theme densities.
+# Row-count meta-features. They can dominate gap-only and combined pools and mask theme densities.
 BURDEN_META_COLS = frozenset(
     {
         "pv_label_rows",
@@ -177,8 +176,7 @@ def feature_columns_for_set(
 
     feature_pool:
       - default: theme densities + burden meta (pv/gap label counts, burden_unique, gap_ratio)
-      - theme_densities: theme/code densities only — matches original README step 11/15 pools
-        (Partnership/SocioEmotional PV + NMF theme gaps; no burden meta dominating LOOCV)
+      - theme_densities: theme and code densities only (no row-count meta-features)
     """
     if feature_pool not in ("default", "theme_densities"):
         raise ValueError(f"feature_pool must be default|theme_densities, got {feature_pool!r}")
@@ -187,15 +185,10 @@ def feature_columns_for_set(
     def _excluded_gap_col(k: str) -> bool:
         if not gap_exclude:
             return False
-        # Per-theme columns: ash_<code>_<suffix> (e.g. ash_mental_distress_dens)
         for code in gap_exclude:
             if k.startswith(f"ash_{code}_"):
                 return True
-        # Bundled group densities: dens_ash_<group>. A group column sums several
-        # theme codes (see NMF_GROUP_CODES). If ANY member code is excluded the
-        # column is contaminated and must be dropped to honor the non-redundant /
-        # circularity-reduced set. NOTE: the old guard `k.startswith("ash_")`
-        # short-circuited here and silently let dens_ash_* leak through.
+        # Group densities sum several theme codes (see NMF_GROUP_CODES).
         if k.startswith("dens_ash_"):
             gname = k[len("dens_ash_"):]
             members = NMF_GROUP_CODES.get(gname, (gname,))

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run reviewer-requested validation analyses for the PTI demonstration.
+"""Run PTI validation analyses.
 
 1. Contraction-normalized NMF (k=6) vs default preprocessing — T4 robustness
 2. Nested LOOCV AUCs: PV-only, NMF-only, integrated (5+4 block)
@@ -220,7 +220,7 @@ def evaluate_models(
 
 def format_report(payload: dict[str, Any]) -> str:
     lines = [
-        "PTI validation analyses (reviewer-requested)",
+        "PTI validation analyses",
         "=" * 72,
     ]
     for label, nmf in payload.get("nmf_runs", {}).items():

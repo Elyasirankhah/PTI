@@ -24,7 +24,7 @@ def pv_cols(df: pd.DataFrame, mode: str) -> list[str]:
         return [c for c in df.columns if c.startswith("pvsub_")]
     if mode == "legacy":
         return [c for c in df.columns if c.startswith("dens_pv")]
-    # auto: prefer raw subcodes (same as PI regression), else legacy groups
+    # auto: prefer raw subcodes, else legacy groups
     sub = [c for c in df.columns if c.startswith("pvsub_")]
     if sub:
         return sub
